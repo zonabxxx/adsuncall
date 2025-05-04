@@ -1,0 +1,106 @@
+/* Forms */
+.form {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  display: block;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e6e6e6;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  height: auto;
+  min-height: 38px;
+}
+
+.form-control {
+  padding: 8px 12px;
+  height: auto;
+  min-height: 38px;
+}
+
+.form textarea {
+  height: 80px;
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Button group in forms */
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.button-group .btn {
+  min-width: 120px;
+}
+
+/* Required field marking */
+.required-field-label {
+  font-weight: 700;
+  color: #333;
+}
+
+.required-field-label::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Two-column form layout */
+@media (min-width: 768px) {
+  .call-form-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .call-form-layout .form-group.full-width {
+    grid-column: span 2;
+  }
+  
+  .call-form-layout .form-group.notes-field {
+    grid-column: span 2;
+  }
+  
+  .call-form-layout .form-group.submit-button {
+    grid-column: 2;
+    justify-self: end;
+    margin-top: 10px;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .form {
+    width: 90%;
+  }
+
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .button-group .btn {
+    width: 100%;
+  }
+  
+  .call-form-layout .form-group.submit-button {
+    grid-column: span 2;
+  }
+} 
