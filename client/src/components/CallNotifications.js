@@ -169,19 +169,6 @@ const CallNotifications = () => {
     e.preventDefault();
   };
   
-  // Pohyb počas drag operácie
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    
-    // Aktualizovať pozíciu notifikačného panelu
-    setPosition({
-      x: e.clientX - initialPosition.x,
-      y: e.clientY - initialPosition.y
-    });
-    
-    e.preventDefault();
-  };
-  
   // Koniec drag operácie
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -189,6 +176,19 @@ const CallNotifications = () => {
   
   // Pridať a odstrániť event listenery pre drag-and-drop
   useEffect(() => {
+    // Pohyb počas drag operácie - presunutá dovnútra useEffect
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+      
+      // Aktualizovať pozíciu notifikačného panelu
+      setPosition({
+        x: e.clientX - initialPosition.x,
+        y: e.clientY - initialPosition.y
+      });
+      
+      e.preventDefault();
+    };
+    
     if (isOpen) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
@@ -198,7 +198,7 @@ const CallNotifications = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isOpen, isDragging, initialPosition, handleMouseMove]);
+  }, [isOpen, isDragging, initialPosition]);
   
   if (!isOpen) {
     return (
