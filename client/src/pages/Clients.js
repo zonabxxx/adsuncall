@@ -243,7 +243,7 @@ function Clients() {
                       )}
                     </td>
                     <td>{client.mail || '-'}</td>
-                    <td>{client.email || '-'}</td>
+                    <td>{client.address || '-'}</td>
                     <td>{client.phone || '-'}</td>
                     <td className="actions-cell">
                       <div className="btn-container">

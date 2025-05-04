@@ -11,7 +11,7 @@ function NewClient() {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    address: '',
     phone: '',
     company: '',
     web: '',
@@ -20,7 +20,7 @@ function NewClient() {
     postal_mail: '',
   });
 
-  const { name, email, phone, company, web, mail, notes, postal_mail } = formData;
+  const { name, address, phone, company, web, mail, notes, postal_mail } = formData;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -74,13 +74,13 @@ function NewClient() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">{t('clients.email')}</label>
+            <label htmlFor="address">{t('clients.email')}</label>
             <input
               type="text"
               className="form-control"
-              id="email"
-              name="email"
-              value={email}
+              id="address"
+              name="address"
+              value={address}
               onChange={onChange}
               placeholder={t('clients.email_placeholder')}
               required

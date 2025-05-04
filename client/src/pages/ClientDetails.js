@@ -18,7 +18,7 @@ function ClientDetails() {
   const [isEditing, setIsEditing] = useState(false);
   const [clientData, setClientData] = useState({
     name: '',
-    email: '',
+    address: '',
     phone: '',
     company: '',
     web: '',
@@ -51,7 +51,7 @@ function ClientDetails() {
     if (client && Object.keys(client).length > 0) {
       setClientData({
         name: client.name || '',
-        email: client.email || '',
+        address: client.address || '',
         phone: client.phone || '',
         company: client.company || '',
         web: client.web || '',
@@ -164,13 +164,13 @@ function ClientDetails() {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="email">{t('clients.email')}</label>
+                  <label htmlFor="address">{t('clients.address')}</label>
                   <input
                     type="text"
                     className="form-control"
-                    id="email"
-                    name="email"
-                    value={clientData.email}
+                    id="address"
+                    name="address"
+                    value={clientData.address}
                     onChange={onChange}
                     required
                   />
@@ -263,7 +263,7 @@ function ClientDetails() {
             <div className="info-grid">
               <div className="info-item">
                 <span className="info-label"><FaEnvelope /> {t('clients.email')}:</span>
-                <span className="info-value">{client.email || '-'}</span>
+                <span className="info-value">{client.address || '-'}</span>
               </div>
               
               <div className="info-item">

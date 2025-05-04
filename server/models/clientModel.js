@@ -11,7 +11,7 @@ const clientSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add a client name'],
     },
-    email: {
+    address: {
       type: String,
       required: [true, 'Please add an address'],
     },

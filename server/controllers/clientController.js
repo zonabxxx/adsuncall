@@ -6,7 +6,8 @@ const User = require('../models/userModel');
 // @route   GET /api/clients
 // @access  Private
 const getClients = asyncHandler(async (req, res) => {
-  const clients = await Client.find({ user: req.user.id }).sort({ createdAt: -1 });
+  const clients = await Client.find({}).sort({ createdAt: -1 });
+  console.log(`Returning ${clients.length} clients to user ${req.user.id}`);
   res.status(200).json(clients);
 });
 
@@ -28,9 +29,9 @@ const getClient = asyncHandler(async (req, res) => {
 // @route   POST /api/clients
 // @access  Private
 const createClient = asyncHandler(async (req, res) => {
-  const { name, email, phone, company, notes, web, mail, postal_mail } = req.body;
+  const { name, address, phone, company, notes, web, mail, postal_mail } = req.body;
 
-  if (!name || !email || !phone) {
+  if (!name || !address || !phone) {
     res.status(400);
     throw new Error('Please include all required fields');
   }
@@ -38,7 +39,7 @@ const createClient = asyncHandler(async (req, res) => {
   const client = await Client.create({
     user: req.user.id,
     name,
-    email,
+    address,
     phone,
     company,
     notes,
@@ -137,8 +138,8 @@ const importClients = asyncHandler(async (req, res) => {
       sanitizedData.phone = sanitizedData.phone.trim();
       
       // Email/Address - optional now, but initialize if exists
-      sanitizedData.email = sanitizedData.email && sanitizedData.email.trim() !== '' 
-        ? sanitizedData.email.trim() 
+      sanitizedData.address = sanitizedData.address && sanitizedData.address.trim() !== '' 
+        ? sanitizedData.address.trim() 
         : '';
       
       // Create a unique key based on company and phone (business name)
@@ -231,7 +232,7 @@ const getClientStats = asyncHandler(async (req, res) => {
   
   // Get fields coverage statistics
   const fieldStats = {
-    withEmail: await Client.countDocuments({ email: { $exists: true, $ne: "" } }),
+    withAddress: await Client.countDocuments({ address: { $exists: true, $ne: "" } }),
     withPhone: await Client.countDocuments({ phone: { $exists: true, $ne: "" } }),
     withWebsite: await Client.countDocuments({ web: { $exists: true, $ne: "" } }),
     withCategory: await Client.countDocuments({ mail: { $exists: true, $ne: "" } }),
@@ -256,4 +257,4 @@ module.exports = {
   deleteClient,
   importClients,
   getClientStats,
-}; 
+};
