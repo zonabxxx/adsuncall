@@ -155,12 +155,17 @@ function Clients() {
             <Link to="/clients/new" className="btn">
               <FaPlus /> {t('clients.add')}
             </Link>
-            <label className="checkbox-container" style={{ marginLeft: '15px' }}>
+            <label className="checkbox-container" style={{ marginLeft: '15px', display: 'inline-flex', alignItems: 'center', fontSize: '0.9rem' }}>
               <input
                 type="checkbox"
                 checked={showInactive}
                 onChange={() => setShowInactive(!showInactive)}
-              /> {t('clients.show_inactive')}
+                style={{ marginRight: '5px' }}
+              /> 
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {showInactive ? <FaToggleOn style={{ marginRight: '5px', color: '#3b82f6' }} /> : <FaToggleOff style={{ marginRight: '5px', color: '#9ca3af' }} />}
+                {t('clients.show_inactive')}
+              </div>
             </label>
             <button 
               onClick={handleManualRefresh} 
