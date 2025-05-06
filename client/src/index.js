@@ -1,3 +1,6 @@
+// Najprv importujeme i18n
+import './i18n-setup';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -14,7 +17,6 @@ import './styles/layout.css';
 import './styles/calendar.css';
 import './styles/modal.css';
 import './styles/notifications.css';
-import './i18n'; // Import i18n configuration
 
 // Create root using React 18 createRoot API
 const rootElement = document.getElementById('root');
