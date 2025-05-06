@@ -124,12 +124,7 @@
     "date": "Dátum",
     "time": "Čas",
     "duration": "Trvanie",
-    "status": {
-      "scheduled": "Naplánovaný",
-      "inProgress": "Prebieha",
-      "completed": "Dokončený",
-      "cancelled": "Zrušený"
-    },
+    "status": "Stav",
     "unknownClient": "Neznámy klient",
     "noNotes": "Žiadne poznámky",
     "addNote": "Pridať poznámku",
@@ -159,7 +154,13 @@
     "completed": "Dokončený",
     "cancelled": "Zrušený",
     "followUp": "Následná akcia",
-    "view_details": "Zobraziť detaily"
+    "view_details": "Zobraziť detaily",
+    "create": "Vytvoriť hovor",
+    "create_subtitle": "Vytvorenie nového hovoru",
+    "select_client": "Vyberte klienta",
+    "duration_placeholder": "Zadajte trvanie hovoru",
+    "notes_placeholder": "Zadajte poznámky k hovoru",
+    "next_action_placeholder": "Zadajte ďalšiu akciu"
   },
   "status": {
     "title": "Stav",
@@ -169,7 +170,8 @@
     "completed": "Dokončený",
     "cancelled": "Zrušený",
     "STATUS.IN PROGRESS": "Prebieha",
-    "status.in progress": "Prebieha"
+    "status.in progress": "Prebieha",
+    "failed": "Neúspešný"
   },
   "outcome": {
     "title": "Výsledok",
