@@ -9,7 +9,8 @@
     "imported_companies": "importované spoločnosti",
     "field_coverage": "Pokrytie údajov",
     "user_distribution": "Distribúcia klientov podľa používateľov",
-    "logged_in_as": "Prihlásený ako"
+    "logged_in_as": "Prihlásený ako",
+    "loading": "Načítavam..."
   },
   "nav": {
     "home": "Domov",
@@ -157,7 +158,8 @@
     "inProgress": "Prebieha",
     "completed": "Dokončený",
     "cancelled": "Zrušený",
-    "followUp": "Následná akcia"
+    "followUp": "Následná akcia",
+    "view_details": "Zobraziť detaily"
   },
   "status": {
     "title": "Stav",
@@ -165,7 +167,9 @@
     "scheduled": "Naplánovaný",
     "in_progress": "Prebieha",
     "completed": "Dokončený",
-    "cancelled": "Zrušený"
+    "cancelled": "Zrušený",
+    "STATUS.IN PROGRESS": "Prebieha",
+    "status.in progress": "Prebieha"
   },
   "outcome": {
     "title": "Výsledok",

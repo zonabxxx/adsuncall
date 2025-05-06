@@ -29,20 +29,24 @@ const CallNotifications = () => {
   useEffect(() => {
     dispatch(getTodaysCalls());
     
-    // Nastaviť interval na obnovenie dát každých 60 sekúnd
+    // Nastaviť interval na obnovenie dát každých 5 minút namiesto 60 sekúnd
     const interval = setInterval(() => {
       dispatch(getTodaysCalls());
-    }, 60000);
+    }, 300000); // zmenené z 60000 na 300000 (5 minút)
     
     return () => clearInterval(interval);
   }, [dispatch]);
   
   // Ak nie sú dnešné volania, načítať všetky volania a filtrovať nadchádzajúce
+  // Pridáme flag, aby sa to nevolalo opakovane
+  const [calledGetCalls, setCalledGetCalls] = useState(false);
+  
   useEffect(() => {
-    if (todaysCalls && todaysCalls.length === 0) {
+    if (todaysCalls && todaysCalls.length === 0 && !calledGetCalls) {
       dispatch(getCalls());
+      setCalledGetCalls(true);
     }
-  }, [todaysCalls, dispatch]);
+  }, [todaysCalls, dispatch, calledGetCalls]);
   
   // Filtrovať nadchádzajúce volania
   useEffect(() => {

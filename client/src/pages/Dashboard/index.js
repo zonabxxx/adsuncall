@@ -38,7 +38,6 @@ const Dashboard = () => {
   
   // Fetch calls data
   useEffect(() => {
-    console.log('Fetching calls data from database...');
     dispatch(getCalls());
   }, [dispatch]);
   
@@ -47,10 +46,8 @@ const Dashboard = () => {
     if (calls && calls.length > 0) {
       if (showOnlyUserData && user) {
         const userCalls = calls.filter(call => call.user && call.user._id === user._id);
-        console.log(`Filtering calls for current user (${user.name}):`, userCalls.length);
         setFilteredCalls(userCalls);
       } else {
-        console.log('Using all calls data:', calls.length);
         setFilteredCalls(calls);
       }
     } else {
@@ -67,10 +64,7 @@ const Dashboard = () => {
   
   // Process call data when it changes
   useEffect(() => {
-    console.log('Processing filtered calls data, count:', filteredCalls?.length);
     if (filteredCalls && filteredCalls.length > 0) {
-      console.log('Filtered calls for statistics:', filteredCalls);
-      
       // Calculate basic statistics - handle case insensitive status matching
       const totalCalls = filteredCalls.length;
       
@@ -78,39 +72,23 @@ const Dashboard = () => {
       const scheduledCalls = filteredCalls.filter(call => {
         const status = normalizeStatus(call.status);
         // Include both "scheduled" and "inprogress" for the scheduled count
-        const isScheduled = status === 'scheduled' || status === 'inprogress';
-        if (isScheduled) console.log('Found scheduled/in-progress call for stats:', call);
-        return isScheduled;
+        return status === 'scheduled' || status === 'inprogress';
       }).length;
       
       const completedCalls = filteredCalls.filter(call => {
         const status = normalizeStatus(call.status);
-        const isCompleted = status === 'completed';
-        if (isCompleted) console.log('Found completed call:', call);
-        return isCompleted;
+        return status === 'completed';
       }).length;
       
       const cancelledCalls = filteredCalls.filter(call => {
         const status = normalizeStatus(call.status);
-        const isCancelled = status === 'cancelled';
-        if (isCancelled) console.log('Found cancelled call:', call);
-        return isCancelled;
+        return status === 'cancelled';
       }).length;
       
       const inProgressCalls = filteredCalls.filter(call => {
         const status = normalizeStatus(call.status);
-        const isInProgress = status === 'inprogress';
-        if (isInProgress) console.log('Found in-progress call:', call);
-        return isInProgress;
+        return status === 'inprogress';
       }).length;
-      
-      console.log('Statistics calculated:', {
-        totalCalls,
-        scheduledCalls,
-        completedCalls,
-        cancelledCalls,
-        inProgressCalls
-      });
       
       // Calculate success rate (completed / (completed + cancelled))
       const completedAndCancelled = completedCalls + cancelledCalls;
@@ -127,8 +105,6 @@ const Dashboard = () => {
           call.status.toLowerCase() === 'cancelled'
         ))
       );
-      
-      console.log('Calls with duration:', callsWithDuration);
       
       const totalDuration = callsWithDuration.reduce(
         (sum, call) => sum + (parseInt(call.duration) || 0), 
@@ -158,42 +134,34 @@ const Dashboard = () => {
           // Check if the call is active or scheduled (case insensitive)
           const status = normalizeStatus(call.status);
           
-          // Always include in-progress calls regardless of date
-          if (status === 'inprogress') {
-            return true;
+          // Check if we have a valid call date
+          if (!call.callDate) {
+            return false;
           }
           
-          // For scheduled calls, check the date
-          if (status === 'scheduled') {
-            // Check if we have a valid call date
-            if (!call.callDate) {
-              return false;
-            }
+          // For all types of calls, check if the date is in the future
+          try {
+            const callDate = new Date(call.callDate);
+            const callDateOnly = new Date(
+              callDate.getFullYear(),
+              callDate.getMonth(), 
+              callDate.getDate()
+            );
+            const todayOnly = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate()
+            );
             
-            // Check if the call date is in the future or today
-            try {
-              const callDate = new Date(call.callDate);
-              const callDateOnly = new Date(
-                callDate.getFullYear(),
-                callDate.getMonth(), 
-                callDate.getDate()
-              );
-              const todayOnly = new Date(
-                today.getFullYear(),
-                today.getMonth(),
-                today.getDate()
-              );
-              
-              // Return true if call date is today or in the future
-              const isUpcoming = callDateOnly >= todayOnly;
-              return isUpcoming;
-            } catch (error) {
-              console.error('Error parsing call date:', error);
-              return false;
-            }
+            // Return true ONLY if call date is in the future, not including today
+            const isUpcoming = callDateOnly > todayOnly;
+            
+            // Only status that matters is "inprogress" or "scheduled"
+            return (status === 'inprogress' || status === 'scheduled') && isUpcoming;
+          } catch (error) {
+            console.error('Error parsing call date:', error);
+            return false;
           }
-          
-          return false;
         })
         .sort((a, b) => new Date(a.callDate) - new Date(b.callDate))
         .slice(0, 5);
