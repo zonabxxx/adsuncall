@@ -116,14 +116,14 @@ function NewCall() {
       <BackButton />
 
       <section className="heading">
-        <h1>{t('calls.create')}</h1>
-        <p>{t('calls.create_subtitle')}</p>
+        <h1>Vytvoriť hovor</h1>
+        <p>Vytvorenie nového hovoru</p>
       </section>
 
       <section className="form">
         <form onSubmit={onSubmit} className="call-form-layout">
           <div className="form-group full-width">
-            <label htmlFor="client">{t('calls.client')}</label>
+            <label htmlFor="client">Klient</label>
             <select
               className="form-control"
               id="client"
@@ -132,7 +132,7 @@ function NewCall() {
               onChange={onChange}
               required
             >
-              <option value="">{t('calls.select_client')}</option>
+              <option value="">Vyberte klienta</option>
               {clients.map((c) => (
                 <option 
                   key={c._id} 
@@ -155,7 +155,7 @@ function NewCall() {
             )}
           </div>
           <div className="form-group">
-            <label htmlFor="callDateTime">{t('calls.call_date_time')}</label>
+            <label htmlFor="callDateTime">Dátum a čas hovoru</label>
             <input
               type="datetime-local"
               className="form-control"
@@ -167,7 +167,7 @@ function NewCall() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="status">{t('calls.status')}</label>
+            <label htmlFor="status">Stav</label>
             <select
               className="form-control"
               id="status"
@@ -176,15 +176,15 @@ function NewCall() {
               onChange={onChange}
               required
             >
-              <option value="scheduled">{t('status.scheduled')}</option>
-              <option value="in_progress">{t('status.in_progress')}</option>
-              <option value="completed">{t('status.completed')}</option>
-              <option value="cancelled">{t('status.cancelled')}</option>
-              <option value="failed">{t('status.failed')}</option>
+              <option value="scheduled">Naplánovaný</option>
+              <option value="in_progress">Prebieha</option>
+              <option value="completed">Dokončený</option>
+              <option value="cancelled">Zrušený</option>
+              <option value="failed">Neúspešný</option>
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="duration">{t('calls.duration')}</label>
+            <label htmlFor="duration">Trvanie</label>
             <input
               type="number"
               className="form-control"
@@ -192,11 +192,11 @@ function NewCall() {
               name="duration"
               value={duration}
               onChange={onChange}
-              placeholder={t('calls.duration_placeholder')}
+              placeholder="Zadajte trvanie hovoru"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="outcome">{t('calls.outcome')}</label>
+            <label htmlFor="outcome">Výsledok</label>
             <select
               className="form-control"
               id="outcome"
@@ -204,27 +204,27 @@ function NewCall() {
               value={outcome}
               onChange={onChange}
             >
-              <option value="">{t('calls.select_outcome')}</option>
-              <option value="success">{t('outcome.success')}</option>
-              <option value="need_followup">{t('outcome.need_followup')}</option>
-              <option value="no_answer">{t('outcome.no_answer')}</option>
-              <option value="not_interested">{t('outcome.not_interested')}</option>
-              <option value="other">{t('outcome.other')}</option>
+              <option value="">Vyberte výsledok</option>
+              <option value="success">Úspešný</option>
+              <option value="need_followup">Potrebné následné konanie</option>
+              <option value="no_answer">Bez odpovede</option>
+              <option value="not_interested">Nezáujem</option>
+              <option value="other">Iné</option>
             </select>
           </div>
-          <div className="form-group notes-field">
-            <label htmlFor="notes">{t('calls.notes')}</label>
+          <div className="form-group">
+            <label htmlFor="notes">Poznámky</label>
             <textarea
               className="form-control"
               id="notes"
               name="notes"
               value={notes}
               onChange={onChange}
-              placeholder={t('calls.notes_placeholder')}
+              placeholder="Zadajte poznámky k hovoru"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="nextAction">{t('calls.next_action')}</label>
+            <label htmlFor="nextAction">Ďalšia akcia</label>
             <input
               type="text"
               className="form-control"
@@ -232,11 +232,11 @@ function NewCall() {
               name="nextAction"
               value={nextAction}
               onChange={onChange}
-              placeholder={t('calls.next_action_placeholder')}
+              placeholder="Zadajte ďalšiu akciu"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="nextActionDateTime">{t('calls.next_action_date_time')}</label>
+            <label htmlFor="nextActionDateTime">Dátum a čas ďalšej akcie</label>
             <input
               type="datetime-local"
               className="form-control"
@@ -247,7 +247,7 @@ function NewCall() {
             />
           </div>
           <div className="form-group submit-button">
-            <button className="btn">{t('auth.submit')}</button>
+            <button className="btn">Odoslať</button>
           </div>
         </form>
       </section>

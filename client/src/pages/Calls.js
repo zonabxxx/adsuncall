@@ -86,7 +86,7 @@ function Calls() {
           <div className="search-wrapper">
             <input
               type="text"
-              placeholder={t('calls.search')}
+              placeholder="Vyhľadávanie..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -143,7 +143,11 @@ function Calls() {
                     <td>{formatDate(call.callDate)}</td>
                     <td>
                       <span className={`status status-${call.status.toLowerCase()}`}>
-                        {t(`calls.status.${call.status.toLowerCase().replace(/ /g, '_')}`)}
+                        {call.status.toLowerCase() === 'scheduled' ? 'Naplánovaný' :
+                         call.status.toLowerCase() === 'in_progress' || call.status.toLowerCase() === 'inprogress' ? 'Prebieha' :
+                         call.status.toLowerCase() === 'completed' ? 'Dokončený' :
+                         call.status.toLowerCase() === 'cancelled' ? 'Zrušený' :
+                         call.status.toLowerCase() === 'failed' ? 'Neúspešný' : 'Naplánovaný'}
                       </span>
                     </td>
                     <td>

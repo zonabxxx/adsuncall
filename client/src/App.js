@@ -85,7 +85,7 @@ function App() {
         </main>
         
         <footer className="footer">
-          <p>&copy; {new Date().getFullYear()} {t('app.title')} | {t('common.allRightsReserved')}</p>
+          <p>&copy; {new Date().getFullYear()} {t('app.title')} | Všetky práva vyhradené</p>
         </footer>
       </div>
       
