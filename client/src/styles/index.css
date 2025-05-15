@@ -1,3 +1,15 @@
+/* Importovanie všetkých CSS súborov */
+@import 'base.css';
+@import 'buttons.css';
+@import 'forms.css';
+@import 'header.css';
+@import 'tables.css';
+@import 'layout.css';
+@import 'calendar.css';
+@import 'modal.css';
+@import 'notifications.css';
+@import 'Dashboard.css';
+
 .user-info-wrapper {
   display: flex;
   align-items: center;
@@ -7,15 +19,17 @@
 .user-info {
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #2c3e50;
   padding: 5px 10px;
   border-radius: 20px;
   margin-left: 10px;
+  border: 1px solid #1a2530;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .user-icon {
   margin-right: 8px;
-  color: #fff;
+  color: #3498db;
   font-size: 16px;
 }
 
@@ -27,11 +41,11 @@
 .user-name {
   font-size: 14px;
   font-weight: 500;
-  color: #fff;
+  color: #ffffff;
 }
 
 .user-role {
   font-size: 12px;
-  color: #e2e8f0;
+  color: #c4dcf5;
   font-weight: 400;
 } 

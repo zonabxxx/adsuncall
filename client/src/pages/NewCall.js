@@ -3,18 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { createCall } from '../features/calls/callSlice';
-import { getClients } from '../features/clients/clientSlice';
+import { createCall, reset } from '../features/calls/callSlice';
+import { getClients, updateClient } from '../features/clients/clientSlice';
 import Spinner from '../components/Spinner';
 import BackButton from '../components/BackButton';
+import Modal from '../components/Modal';
 
 function NewCall() {
   const { t } = useTranslation();
   const location = useLocation();
   const preselectedClient = location.state?.client;
+  const clientIdFromQuery = new URLSearchParams(location.search).get('client');
 
   const [formData, setFormData] = useState({
-    client: '',
+    client: preselectedClient?._id || clientIdFromQuery || '',
     callDateTime: new Date().toISOString().slice(0, -8), // Format: YYYY-MM-DDThh:mm
     status: 'scheduled',
     duration: '',
@@ -29,7 +31,12 @@ function NewCall() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { clients, isLoading: isClientsLoading } = useSelector((state) => state.clients);
-  const { isLoading } = useSelector((state) => state.calls);
+  const { isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.calls
+  );
+
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [currentClientId, setCurrentClientId] = useState(null);
 
   useEffect(() => {
     dispatch(getClients());
@@ -72,23 +79,37 @@ function NewCall() {
 
     // Format data for the backend
     const callData = {
-      ...formData,
-      callDate: callDateTime, // The API still expects callDate
-      nextActionDate: nextActionDateTime // The API still expects nextActionDate
+      client: formData.client,
+      dateTime: callDateTime,
+      status: formData.status,
+      duration: formData.duration,
+      notes: formData.notes,
+      outcome: formData.outcome,
+      nextAction: formData.nextAction,
+      nextActionDateTime: formData.nextActionDateTime
+        ? new Date(formData.nextActionDateTime).toISOString()
+        : null,
     };
-
-    // Remove the new fields to avoid confusion on the backend
-    delete callData.callDateTime;
-    delete callData.nextActionDateTime;
 
     console.log('Data sending to API:', callData);
 
     dispatch(createCall(callData))
       .unwrap()
-      .then((response) => {
-        console.log('Call created successfully:', response);
-        toast.success(t('calls.success_create'));
-        navigate('/calls');
+      .then((createdCall) => {
+        toast.success(t('calls.created_success'));
+        dispatch(reset());
+        
+        // Skontrolujeme, či bol hovor úspešný a či klient ešte nie je označený ako klient
+        if (
+          callData.outcome === 'success' && 
+          clients.find(c => c._id === formData.client) && 
+          !clients.find(c => c._id === formData.client).isClient
+        ) {
+          setCurrentClientId(formData.client);
+          setShowClientModal(true);
+        } else {
+          navigate('/calls');
+        }
       })
       .catch((error) => {
         console.error('Error creating call:', error);
@@ -105,6 +126,38 @@ function NewCall() {
           toast.error(error || t('calls.error_create'));
         }
       });
+  };
+
+  // Funkcia na pridanie firmy medzi klientov
+  const handleAddToClients = () => {
+    if (!currentClientId) {
+      toast.error(t('errors.client_not_found'));
+      setShowClientModal(false);
+      navigate('/calls');
+      return;
+    }
+    
+    dispatch(updateClient({
+      clientId: currentClientId,
+      clientData: { isClient: true }
+    }))
+      .unwrap()
+      .then(() => {
+        toast.success(t('clients.added_to_clients') || 'Firma bola pridaná medzi klientov');
+        setShowClientModal(false);
+        navigate('/calls');
+      })
+      .catch((error) => {
+        toast.error(t('clients.error_update') || 'Chyba pri aktualizácii klienta');
+        setShowClientModal(false);
+        navigate('/calls');
+      });
+  };
+
+  // Funkcia na zatvorenie modálneho okna bez pridania medzi klientov
+  const handleCloseModal = () => {
+    setShowClientModal(false);
+    navigate('/calls');
   };
 
   if (isLoading || isClientsLoading) {
@@ -251,6 +304,25 @@ function NewCall() {
           </div>
         </form>
       </section>
+
+      {/* Modálne okno pre otázku o pridaní medzi klientov */}
+      {showClientModal && (
+        <Modal
+          show={showClientModal}
+          onClose={handleCloseModal}
+          title={t('clients.add_to_clients_title') || "Pridanie medzi klientov"}
+        >
+          <p>{t('clients.successful_call_add_client') || "Hovor bol úspešný. Chcete pridať túto firmu medzi vašich klientov?"}</p>
+          <div className="modal-actions">
+            <button className="btn btn-success" onClick={handleAddToClients}>
+              {t('common.yes') || "Áno"}
+            </button>
+            <button className="btn btn-secondary" onClick={handleCloseModal}>
+              {t('common.no') || "Nie"}
+            </button>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }

@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { FaPlus, FaAngleLeft, FaAngleRight, FaEye, FaPhone, FaToggleOn, FaToggleOff, FaTrash, FaSync } from 'react-icons/fa';
+import { FaPlus, FaAngleLeft, FaAngleRight, FaEye, FaPhone, FaToggleOn, FaToggleOff, FaTrash, FaSync, FaStar, FaRegStar } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { getClients, reset, toggleClientStatus, deleteClient } from '../features/clients/clientSlice';
+import { getClients, reset, toggleClientStatus, deleteClient, updateClient } from '../features/clients/clientSlice';
 import Spinner from '../components/Spinner';
 
 function Clients() {
@@ -17,7 +17,8 @@ function Clients() {
   const [itemsPerPage, setItemsPerPage] = useState(50);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredClients, setFilteredClients] = useState([]);
-  const [showInactive, setShowInactive] = useState(true);
+  const [showInactive, setShowInactive] = useState(false);
+  const [showOnlyClients, setShowOnlyClients] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [connectionError, setConnectionError] = useState(false);
 
@@ -64,27 +65,49 @@ function Clients() {
     }
   }, [isError, message, loadClients, retryCount, t]);
 
+  // Filter clients based on search term and active status
   useEffect(() => {
     if (clients) {
-      let results = clients.filter(client => {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          client.name?.toLowerCase().includes(searchLower) ||
-          client.company?.toLowerCase().includes(searchLower) ||
-          client.email?.toLowerCase().includes(searchLower) ||
-          client.phone?.toLowerCase().includes(searchLower)
-        );
+      console.log('Filtrujem klientov:', {
+        celkový_počet: clients.length,
+        showOnlyClients: showOnlyClients,
+        showInactive: showInactive,
+        searchTerm: searchTerm
       });
       
-      // Filter out inactive clients if showInactive is false
-      if (!showInactive) {
-        results = results.filter(client => client.isActive);
-      }
+      // Spočítame klientov s isClient = true
+      const klientiCount = clients.filter(c => c.isClient === true).length;
+      console.log(`Počet klientov s isClient=true: ${klientiCount}`);
+      
+      const results = clients.filter(client => {
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch = 
+          (client.name && client.name.toLowerCase().includes(searchLower)) ||
+          (client.company && client.company.toLowerCase().includes(searchLower)) ||
+          (client.address && client.address.toLowerCase().includes(searchLower)) ||
+          (client.phone && client.phone.toLowerCase().includes(searchLower)) ||
+          (client.mail && client.mail.toLowerCase().includes(searchLower));
+        
+        // Filter based on active status
+        const isActiveMatch = showInactive ? true : client.isActive;
+        
+        // Filter based on client status - opravená logika
+        const isClientMatch = showOnlyClients ? (client.isClient === true) : true;
+        
+        // Log pre debugging
+        if (showOnlyClients && client.isClient === true) {
+          console.log(`Nájdený klient: ${client.name}, isClient=${client.isClient}`);
+        }
+        
+        return matchesSearch && isActiveMatch && isClientMatch;
+      });
+      
+      console.log(`Výsledky filtrovania: ${results.length} záznamov`);
       
       setFilteredClients(results);
       setCurrentPage(1); // Reset to first page on new search
     }
-  }, [clients, searchTerm, showInactive]);
+  }, [clients, searchTerm, showInactive, showOnlyClients]);
 
   // Toggle client active status
   const handleToggleStatus = (e, clientId) => {
@@ -141,6 +164,31 @@ function Clients() {
     setCurrentPage(1); // Reset to first page when changing items per page
   };
 
+  // Update client's isClient status
+  const handleToggleClientStatus = (e, clientId, currentStatus) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log(`Prepínam status klienta s ID ${clientId} z ${currentStatus} na ${!currentStatus}`);
+    
+    dispatch(updateClient({ 
+      clientId: clientId, 
+      clientData: { isClient: !currentStatus } 
+    }))
+      .unwrap()
+      .then((updatedClient) => {
+        console.log('Úspešne aktualizovaný klient:', updatedClient);
+        toast.success(t('clients.client_status_updated'));
+        
+        // Namiesto reloadu stránky len aktualizujeme stav
+        dispatch(getClients());
+      })
+      .catch((error) => {
+        console.error('Chyba pri aktualizácii statusu klienta:', error);
+        toast.error(t('clients.error_update'));
+      });
+  };
+
   if (isLoading) {
     return <Spinner />;
   }
@@ -150,40 +198,46 @@ function Clients() {
       <section className="heading">
         <h1>{t('clients.title')}</h1>
         <p>{t('clients.subtitle')}</p>
-        <div className="actions-row">
-          <div>
-            <Link to="/clients/new" className="btn">
-              <FaPlus /> {t('clients.add')}
-            </Link>
-            <label className="checkbox-container" style={{ marginLeft: '15px', display: 'inline-flex', alignItems: 'center', fontSize: '0.9rem' }}>
-              <input
-                type="checkbox"
-                checked={showInactive}
-                onChange={() => setShowInactive(!showInactive)}
-                style={{ marginRight: '5px' }}
-              /> 
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {showInactive ? <FaToggleOn style={{ marginRight: '5px', color: '#3b82f6' }} /> : <FaToggleOff style={{ marginRight: '5px', color: '#9ca3af' }} />}
-                {t('clients.show_inactive')}
+        
+        <div className="filter-panel">
+          <div className="filters-section">
+            <div className="filter-options-bar">
+              <div className="filter-left">
+                <Link to="/clients/new" className="btn btn-primary">
+                  <FaPlus /> {t('clients.add')}
+                </Link>
+                
+                <div className="filter-item">
+                  <input
+                    type="checkbox"
+                    id="showInactive"
+                    checked={showInactive}
+                    onChange={() => setShowInactive(!showInactive)}
+                  />
+                  <label htmlFor="showInactive">
+                    {t('clients.show_inactive')}
+                  </label>
+                </div>
+                
+                <button 
+                  onClick={handleManualRefresh} 
+                  className="refresh-button"
+                  title={t('clients.refresh_data')}
+                >
+                  <FaSync /> {t('clients.refresh')}
+                </button>
               </div>
-            </label>
-            <button 
-              onClick={handleManualRefresh} 
-              className="btn btn-light" 
-              style={{ marginLeft: '10px' }}
-              title={t('clients.refresh_data')}
-            >
-              <FaSync /> 
-            </button>
-          </div>
-          <div className="search-wrapper">
-            <input
-              type="text"
-              placeholder={t('clients.search')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
+              
+              <div className="search-compact">
+                <input
+                  type="text"
+                  placeholder={t('clients.search')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -198,6 +252,22 @@ function Clients() {
       )}
 
       <div className="table-container">
+        <div className="table-tabs-container">
+          <button 
+            className={`tab-button-register ${!showOnlyClients ? 'active' : ''}`}
+            onClick={() => setShowOnlyClients(false)}
+          >
+            {t('clients.all_companies')}
+          </button>
+          <button 
+            className={`tab-button-register ${showOnlyClients ? 'active' : ''}`}
+            onClick={() => setShowOnlyClients(true)}
+          >
+            <FaStar style={{ marginRight: '6px', fontSize: '0.9rem' }} />
+            {t('clients.only_clients')}
+          </button>
+        </div>
+        
         {filteredClients.length === 0 ? (
           connectionError ? (
             <p>{t('errors.could_not_load_clients')}</p>
@@ -206,7 +276,7 @@ function Clients() {
           )
         ) : (
           <>
-            <div className="table-toolbar">
+            <div className="table-header-container">
               <div className="items-per-page">
                 <label htmlFor="rowsPerPage">{t('clients.rows_per_page')}:</label>
                 <select 
@@ -220,9 +290,9 @@ function Clients() {
                   <option value="50">50</option>
                   <option value="100">100</option>
                 </select>
-              </div>
-              <div className="page-info">
-                {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredClients.length)} {t('clients.of')} {filteredClients.length}
+                <div className="page-info-summary">
+                  {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredClients.length)} {t('clients.of')} {filteredClients.length}
+                </div>
               </div>
             </div>
 
@@ -238,12 +308,23 @@ function Clients() {
               </thead>
               <tbody>
                 {currentItems.map((client) => (
-                  <tr key={client._id} className={client.isActive ? '' : 'client-row-inactive'}>
+                  <tr 
+                    key={client._id} 
+                    className={`
+                      ${client.isActive ? '' : 'client-row-inactive'}
+                      ${client.isClient ? 'client-row-is-client' : ''}
+                    `}
+                  >
                     <td>
                       {client.name}
                       {!client.isActive && (
                         <span className="client-status-indicator client-inactive">
                           {t('clients.inactive')}
+                        </span>
+                      )}
+                      {client.isClient && (
+                        <span className="client-status-indicator client-is-client">
+                          {t('clients.client_indicator')}
                         </span>
                       )}
                     </td>
@@ -265,7 +346,15 @@ function Clients() {
                         </Link>
                         <button 
                           type="button"
-                          onClick={(e) => handleToggleStatus(e, client._id)} 
+                          onClick={(e) => handleToggleClientStatus(e, client._id, client.isClient)}
+                          className={`action-btn ${client.isClient ? 'btn-info' : 'btn-outline'}`}
+                          title={client.isClient ? t('clients.unmark_as_client') : t('clients.mark_as_client')}
+                        >
+                          {client.isClient ? <FaStar /> : <FaRegStar />}
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={(e) => handleToggleStatus(e, client._id)}
                           className={`action-btn ${client.isActive ? 'btn-warning' : 'btn-success'}`}
                           title={client.isActive ? t('clients.deactivate') : t('clients.activate')}
                         >
@@ -273,7 +362,7 @@ function Clients() {
                         </button>
                         <button 
                           type="button"
-                          onClick={(e) => handleDeleteClient(e, client._id)} 
+                          onClick={(e) => handleDeleteClient(e, client._id)}
                           className="action-btn btn-danger"
                           title={t('clients.delete')}
                         >
