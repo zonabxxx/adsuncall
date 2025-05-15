@@ -6,7 +6,7 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 0;
 }
 
 /* Ensure all tables are full width */
@@ -356,4 +356,51 @@ th, td {
     width: 12px !important;
     height: 12px !important;
   }
+}
+
+/* Štýly pre záložky ako súčasť tabuľky */
+.table-tabs-container {
+  display: flex;
+  width: 100%;
+  border-bottom: none;
+  background-color: #f1f5f9;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.tab-button-register {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+  display: flex;
+  align-items: center;
+}
+
+.tab-button-register:hover {
+  color: #3498db;
+  background-color: #f8fafc;
+}
+
+.tab-button-register.active {
+  color: #3498db;
+  background-color: #fff;
+  border-bottom: 3px solid #3498db;
+  font-weight: 600;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Upravený štýl pre header kontajner, aby nadväzoval na záložky */
+.table-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #e2e8f0;
 } 

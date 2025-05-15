@@ -115,9 +115,18 @@ export const updateCall = createAsyncThunk(
   'calls/update',
   async ({ callId, callData }, thunkAPI) => {
     try {
+      console.log('callSlice: Aktualizácia hovoru spustená', { callId, callData });
       const token = thunkAPI.getState().auth.user.token;
-      return await callService.updateCall(callId, callData, token);
+      const response = await callService.updateCall(callId, callData, token);
+      console.log('callSlice: Aktualizácia hovoru úspešná', response);
+      
+      // Aktualizácia kompletného zoznamu po úspešnej aktualizácii
+      // Toto zabezpečí, že aktualizácie sa prejavia okamžite v UI
+      await thunkAPI.dispatch(getCalls());
+      
+      return response;
     } catch (error) {
+      console.error('callSlice: Chyba pri aktualizácii hovoru', error);
       const message =
         (error.response &&
           error.response.data &&

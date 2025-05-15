@@ -38,6 +38,13 @@ const clientSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isClient: {
+      type: Boolean,
+      default: false,
+    },
+    clientSince: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

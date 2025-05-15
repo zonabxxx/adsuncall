@@ -4,9 +4,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaCalendarAlt, FaClock, FaUser, FaPhoneAlt, FaClipboardList, FaListAlt, FaTasks, FaSave, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { getCall, updateCall, deleteCall, reset } from '../features/calls/callSlice';
+import { updateClient } from '../features/clients/clientSlice';
 import Spinner from '../components/Spinner';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
+import Modal from '../components/Modal';
 
 function CallDetails() {
   const { t } = useTranslation();
@@ -24,6 +26,8 @@ function CallDetails() {
     callDateTime: '',
     nextActionDateTime: '',
   });
+  const [previousOutcome, setPreviousOutcome] = useState('');
+  const [showClientModal, setShowClientModal] = useState(false);
 
   const { call, isLoading, isError, message } = useSelector(
     (state) => state.calls
@@ -66,14 +70,25 @@ function CallDetails() {
         callDateTime,
         nextActionDateTime
       });
+      
+      // Pri načítaní uložíme aktuálny výsledok pre porovnanie
+      setPreviousOutcome(call.outcome || '');
     }
   }, [call]);
 
   const onChange = (e) => {
+    const { name, value } = e.target;
+    
     setCallData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+    
+    // Ak sa zmení výsledok na "úspešný", pripravíme sa na zobrazenie modálneho okna
+    if (name === 'outcome' && value === 'success' && previousOutcome !== 'success' && call?.client && !call.client.isClient) {
+      // Toto nastavenie necháme pre onSubmit, aby sa to zobrazilo až po uložení
+      console.log('Outcome changed to success for non-client company');
+    }
   };
 
   const onSubmit = (e) => {
@@ -93,10 +108,55 @@ function CallDetails() {
     dispatch(updateCall({
       callId,
       callData: updatedCallData,
-    }));
+    }))
+      .unwrap()
+      .then(() => {
+        toast.success(t('calls.updated_success'));
+        
+        // Ak sa zmenil výsledok na "úspešný" a firma nie je klientom, zobrazíme modálne okno
+        if (callData.outcome === 'success' && previousOutcome !== 'success' && call?.client && !call.client.isClient) {
+          setShowClientModal(true);
+        } else {
+          setIsEditing(false);
+        }
+        
+        // Aktualizujeme predchádzajúci výsledok
+        setPreviousOutcome(callData.outcome);
+      })
+      .catch((error) => {
+        toast.error(t('calls.error_update'));
+      });
+  };
+
+  const handleAddToClients = () => {
+    if (!call || !call.client || !call.client._id) {
+      toast.error(t('errors.client_not_found'));
+      setShowClientModal(false);
+      setIsEditing(false);
+      return;
+    }
     
+    dispatch(updateClient({
+      clientId: call.client._id,
+      clientData: { isClient: true }
+    }))
+      .unwrap()
+      .then(() => {
+        toast.success(t('clients.added_to_clients') || 'Firma bola pridaná medzi klientov');
+        setShowClientModal(false);
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        toast.error(t('clients.error_update') || 'Chyba pri aktualizácii klienta');
+        setShowClientModal(false);
+        setIsEditing(false);
+      });
+  };
+  
+  // Funkcia na zatvorenie modálneho okna bez pridania medzi klientov
+  const handleCloseModal = () => {
+    setShowClientModal(false);
     setIsEditing(false);
-    toast.success(t('calls.updated_success'));
   };
 
   const onDelete = () => {
@@ -404,6 +464,25 @@ function CallDetails() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modálne okno pre otázku o pridaní medzi klientov */}
+      {showClientModal && (
+        <Modal
+          show={showClientModal}
+          onClose={handleCloseModal}
+          title={t('clients.add_to_clients_title') || "Pridanie medzi klientov"}
+        >
+          <p>{t('clients.successful_call_add_client') || "Hovor bol úspešný. Chcete pridať túto firmu medzi vašich klientov?"}</p>
+          <div className="modal-actions">
+            <button className="btn btn-success" onClick={handleAddToClients}>
+              {t('common.yes') || "Áno"}
+            </button>
+            <button className="btn btn-secondary" onClick={handleCloseModal}>
+              {t('common.no') || "Nie"}
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );

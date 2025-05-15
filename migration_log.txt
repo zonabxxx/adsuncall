@@ -1,0 +1,48 @@
+[2025-05-04T19:49:09.409Z] Migration started
+[2025-05-04T19:49:09.418Z] Connected to local MongoDB
+[2025-05-04T19:49:09.433Z] Found 1 users in local database
+[2025-05-04T19:49:09.447Z] Found 1772 clients in local database
+[2025-05-04T19:49:09.448Z] Found 2 calls in local database
+[2025-05-04T19:49:09.450Z] Connected to MongoDB Atlas
+[2025-05-04T19:49:09.836Z] Existing data in Atlas: 1 users, 1772 clients, 1 calls
+[2025-05-04T19:49:09.837Z] WARNING: There is existing data in Atlas database.
+[2025-05-04T19:49:09.837Z] Clearing existing data in Atlas...
+[2025-05-04T19:49:09.936Z] Cleared existing data in Atlas
+[2025-05-04T19:49:09.968Z] Users migrated successfully: 1/1
+[2025-05-04T19:49:10.249Z] Clients migrated successfully: 1772/1772
+[2025-05-04T19:49:10.273Z] Calls migrated successfully: 2/2
+[2025-05-04T19:49:10.273Z] Migration completed. Inserted: 1 users, 1772 clients, 2 calls
+[2025-05-04T19:49:10.273Z] If migration from local database failed, you can use mongorestore with the following command:
+[2025-05-04T19:49:10.273Z] mongorestore --uri="mongodb+srv://jmartinkovych:Plimbo4321098@cluster0.ufcmh.mongodb.net/callManagementSystem?retryWrites=true&w=majority" mongodb_backup/
+[2025-05-04T19:51:34.960Z] Migration started
+[2025-05-04T19:51:34.969Z] Connected to local MongoDB
+[2025-05-04T19:51:34.983Z] Found 1 users in local database
+[2025-05-04T19:51:34.995Z] Found 1772 clients in local database
+[2025-05-04T19:51:34.996Z] Found 2 calls in local database
+[2025-05-04T19:51:34.997Z] Connected to MongoDB Atlas
+[2025-05-04T19:51:35.380Z] Existing data in Atlas: 1 users, 1772 clients, 2 calls
+[2025-05-04T19:51:35.380Z] WARNING: There is existing data in Atlas database.
+[2025-05-04T19:51:35.380Z] Clearing existing data in Atlas...
+[2025-05-04T19:51:35.474Z] Cleared existing data in Atlas
+[2025-05-04T19:51:35.502Z] Users migrated successfully: 1/1
+[2025-05-04T19:51:35.550Z] Error migrating clients: Client validation failed: address: Please add an address
+[2025-05-04T19:51:35.572Z] Calls migrated successfully: 2/2
+[2025-05-04T19:51:35.572Z] Migration completed. Inserted: 1 users, 0 clients, 2 calls
+[2025-05-04T19:51:35.572Z] If migration from local database failed, you can use mongorestore with the following command:
+[2025-05-04T19:51:35.572Z] mongorestore --uri="mongodb+srv://jmartinkovych:Plimbo4321098@cluster0.ufcmh.mongodb.net/callManagementSystem?retryWrites=true&w=majority" mongodb_backup/
+[2025-05-04T19:51:52.589Z] Migration started
+[2025-05-04T19:51:52.597Z] Connected to local MongoDB
+[2025-05-04T19:51:52.611Z] Found 1 users in local database
+[2025-05-04T19:51:52.623Z] Found 1772 clients in local database
+[2025-05-04T19:51:52.624Z] Found 2 calls in local database
+[2025-05-04T19:51:52.626Z] Connected to MongoDB Atlas
+[2025-05-04T19:51:53.019Z] Existing data in Atlas: 1 users, 0 clients, 2 calls
+[2025-05-04T19:51:53.019Z] WARNING: There is existing data in Atlas database.
+[2025-05-04T19:51:53.019Z] Clearing existing data in Atlas...
+[2025-05-04T19:51:53.091Z] Cleared existing data in Atlas
+[2025-05-04T19:51:53.122Z] Users migrated successfully: 1/1
+[2025-05-04T19:51:53.422Z] Clients migrated successfully: 1772/1772
+[2025-05-04T19:51:53.446Z] Calls migrated successfully: 2/2
+[2025-05-04T19:51:53.446Z] Migration completed. Inserted: 1 users, 1772 clients, 2 calls
+[2025-05-04T19:51:53.446Z] If migration from local database failed, you can use mongorestore with the following command:
+[2025-05-04T19:51:53.446Z] mongorestore --uri="mongodb+srv://jmartinkovych:Plimbo4321098@cluster0.ufcmh.mongodb.net/callManagementSystem?retryWrites=true&w=majority" mongodb_backup/

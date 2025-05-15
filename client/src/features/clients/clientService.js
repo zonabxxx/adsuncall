@@ -111,10 +111,15 @@ const updateClient = async (clientId, clientData, token) => {
     },
   };
 
+  console.log(`Aktualizujem klienta s ID: ${clientId}`);
+  console.log(`Dáta na aktualizáciu:`, clientData);
+
   try {
     const response = await axiosInstance.put(API_URL + clientId, clientData, config);
+    console.log('Odpoveď z API:', response.data);
     return response.data;
   } catch (error) {
+    console.error('Chyba pri aktualizácii klienta:', error);
     if (error.code === 'ECONNABORTED') {
       throw new Error('Connection timeout. Server is not responding.');
     }

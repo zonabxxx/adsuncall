@@ -61,6 +61,11 @@ const updateClient = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Client not found');
   }
+  
+  // Ak sa zmení status isClient na true a predtým bol false, nastavíme clientSince na aktuálny dátum
+  if (req.body.isClient === true && client.isClient === false) {
+    req.body.clientSince = new Date();
+  }
 
   const updatedClient = await Client.findByIdAndUpdate(
     req.params.id,
@@ -68,6 +73,58 @@ const updateClient = asyncHandler(async (req, res) => {
     { new: true }
   );
 
+  res.status(200).json(updatedClient);
+});
+
+// @desc    Set client status (isClient)
+// @route   PUT /api/clients/:id/setClientStatus
+// @access  Private
+const setClientStatus = asyncHandler(async (req, res) => {
+  console.log('setClientStatus endpoint volaný:', {
+    clientId: req.params.id,
+    requestBody: req.body,
+    user: req.user.id
+  });
+
+  const { isClient } = req.body;
+  
+  if (isClient === undefined) {
+    console.log('Chyba: isClient status chýba v požiadavke');
+    res.status(400);
+    throw new Error('isClient status is required');
+  }
+  
+  console.log(`Vyhľadávam klienta s ID: ${req.params.id}`);
+  const client = await Client.findById(req.params.id);
+
+  if (!client) {
+    console.log(`Klient s ID ${req.params.id} nebol nájdený`);
+    res.status(404);
+    throw new Error('Client not found');
+  }
+  
+  console.log(`Klient nájdený: ${client.name}, aktuálny stav isClient: ${client.isClient}`);
+  
+  const updateData = {
+    isClient: isClient
+  };
+  
+  // Ak sa zmení status na klienta, nastavíme dátum od kedy je klientom
+  if (isClient === true && client.isClient === false) {
+    console.log('Nastavujem clientSince na aktuálny dátum');
+    updateData.clientSince = new Date();
+  }
+  
+  console.log('Dáta na aktualizáciu:', updateData);
+  
+  const updatedClient = await Client.findByIdAndUpdate(
+    req.params.id,
+    updateData,
+    { new: true }
+  );
+
+  console.log(`Klient ${updatedClient.name} úspešne aktualizovaný, nový stav isClient: ${updatedClient.isClient}`);
+  
   res.status(200).json(updatedClient);
 });
 
@@ -257,4 +314,5 @@ module.exports = {
   deleteClient,
   importClients,
   getClientStats,
+  setClientStatus,
 };

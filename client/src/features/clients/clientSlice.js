@@ -72,9 +72,13 @@ export const updateClient = createAsyncThunk(
   'clients/update',
   async ({ clientId, clientData }, thunkAPI) => {
     try {
+      console.log('clientSlice: Aktualizácia klienta spustená', { clientId, clientData });
       const token = thunkAPI.getState().auth.user.token;
-      return await clientService.updateClient(clientId, clientData, token);
+      const response = await clientService.updateClient(clientId, clientData, token);
+      console.log('clientSlice: Aktualizácia klienta úspešná', response);
+      return response;
     } catch (error) {
+      console.error('clientSlice: Chyba pri aktualizácii klienta', error);
       const message =
         (error.response &&
           error.response.data &&
